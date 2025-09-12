@@ -13,6 +13,7 @@ const AppRouter = () => {
             <Route path="/admin" element={<ProtectedRouter><Admin /></ProtectedRouter>} />
             <Route path="/login" element={<LogIn />} />
             <Route path="/singup" element={<SingUp />} />
+            <Route path="*" element={<h1>404 Not Found</h1>} />
         </Routes>
     );
 };
