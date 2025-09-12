@@ -1,4 +1,4 @@
-export default function UseAuth() {
+export default function UserAuth() {
     try{
         const _localStorage = localStorage.getItem('user');
         if(_localStorage){

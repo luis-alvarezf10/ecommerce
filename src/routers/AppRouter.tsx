@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom"
 import Home from "../pages/Home";
+import Admin from "../pages/Admin";
 import SingUp from "../pages/SingUp";
 import LogIn from "../pages/LogIn";
 import ProtectedRouter from "../routers/ProtectedRouter";
@@ -9,6 +10,7 @@ const AppRouter = () => {
         <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<ProtectedRouter><Home /></ProtectedRouter>} />
+            <Route path="/admin" element={<ProtectedRouter><Admin /></ProtectedRouter>} />
             <Route path="/login" element={<LogIn />} />
             <Route path="/singup" element={<SingUp />} />
         </Routes>
