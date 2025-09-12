@@ -1,0 +1,18 @@
+import { Routes, Route, Navigate } from "react-router-dom"
+import Home from "../pages/Home";
+import SingUp from "../pages/SingUp";
+import LogIn from "../pages/LogIn";
+import ProtectedRouter from "../routers/ProtectedRouter";
+
+const AppRouter = () => {
+    return (
+        <Routes>
+            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="/home" element={<ProtectedRouter><Home /></ProtectedRouter>} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/singup" element={<SingUp />} />
+        </Routes>
+    );
+};
+
+export default AppRouter;
