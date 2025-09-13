@@ -112,7 +112,13 @@ const Cart: React.FC = () => {
       
     } catch (error) {
       console.error('Error completo:', error);
-      alert(`Error: ${error.message || 'Error desconocido'}`);
+      let errorMessage = 'Error desconocido';
+      if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = (error as { message?: string }).message || errorMessage;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      alert(`Error: ${errorMessage}`);
     } finally {
       setIsProcessing(false);
     }

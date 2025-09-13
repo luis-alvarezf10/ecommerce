@@ -49,7 +49,7 @@ export default function Orders() {
             // Procesar URLs de imágenes
             const ordersWithImageUrls = data?.map(order => ({
                 ...order,
-                order_items: order.order_items.map(item => ({
+                order_items: order.order_items.map((item: any) => ({
                     ...item,
                     products: {
                         ...item.products,
