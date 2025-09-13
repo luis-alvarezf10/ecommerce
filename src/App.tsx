@@ -5,6 +5,7 @@ import { CartProvider } from './contexts/CartContext';
 
 function App() {
   return (
+    // cambios
     <BrowserRouter>
       <CartProvider>
         <AppRouter />
