@@ -55,7 +55,7 @@ const LogIn = () => {
                 <span className="sr-only">Loading...</span>
             </div>
             }
-            <div className="w-1/3 mx-auto flex flex-col gap-4 bg-white p-4 rounded-lg shadow-xl">
+            <div className="w-1/2 md:w-1/3 mx-auto flex flex-col gap-4 bg-white p-4 rounded-lg shadow-xl">
                 <h2 className="text-2xl font-bold text-center">Inicio de Sesión</h2>
                 <form className="flex flex-col gap-4">
                     <div className="flex flex-col">
