@@ -44,8 +44,11 @@ const LogIn = () => {
     }
 
     return (
-        <div className="flex flex-col justify-center items-center min-h-screen gap-5">
-            <h1 className="text-2xl font-bold text-center">Bienvendio a Flowven!</h1>    
+        <div className="flex flex-col justify-center items-center min-h-screen gap-5 bg-[#0a1b34]">
+            <div className="flex flex-col gap-2">
+                <h1 className="text-2xl text-white font-bold text-center">FLOW VEN</h1>    
+                <p className="text-gray-300 text-center ">Inicia sesión para continuar</p>
+            </div>
             {loading && 
             <div role="status">
                 <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -55,9 +58,12 @@ const LogIn = () => {
                 <span className="sr-only">Loading...</span>
             </div>
             }
-            <div className="w-1/2 md:w-1/3 mx-auto flex flex-col gap-4 bg-white p-4 rounded-lg shadow-xl">
-                <h2 className="text-2xl font-bold text-center">Inicio de Sesión</h2>
-                <form className="flex flex-col gap-4">
+            <div className="md:w-1/3 w-3/4 mx-auto flex flex-col gap-4 bg-white p-4 rounded-lg shadow-xl justify-center items-center">
+                <div className="flex flex-col gap-2">
+                    <h2 className="text-2xl font-semibold text-center">Bienvenido</h2>
+                    <p className="text-gray-600 text-center">Accede a tu cuenta</p>
+                </div>
+                <form className="flex flex-col gap-4 w-[90%]">
                     <div className="flex flex-col">
                         <label htmlFor="email" className="text-sm font-medium text-gray-700">Email</label>
                         <input type="email" name="email" placeholder="tuemail@ejemplo.com" required onChange={(e) => setEmail(e.target.value)} className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
@@ -82,13 +88,21 @@ const LogIn = () => {
                         </button>
                     </div>
                     </div>
-                    <button type="button" onClick={handleSubmit} className="bg-blue-500 cursor-pointer w-1/2 mx-auto rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-blue-600 text-white font-semibold">Iniciar Sesion</button>
+                    <button type="button" onClick={handleSubmit} className="bg-[#0a1b34] cursor-pointer  mx-auto rounded-lg py-2 px-12 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-red-800 text-white font-semibold">Iniciar Sesión</button>
                 </form>
-
+                <button type="button" className="text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 me-2 mb-2 cursor-pointer">
+                    <svg className="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 19">
+                    <path fill-rule="evenodd" d="M8.842 18.083a8.8 8.8 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.8-8.652h.153a8.464 8.464 0 0 1 5.7 2.257l-2.193 2.038A5.27 5.27 0 0 0 9.09 3.4a5.882 5.882 0 0 0-.2 11.76h.124a5.091 5.091 0 0 0 5.248-4.057L14.3 11H9V8h8.34c.066.543.095 1.09.088 1.636-.086 5.053-3.463 8.449-8.4 8.449l-.186-.002Z" clip-rule="evenodd"/>
+                    </svg>
+                Iniciar Sesión con Google
+                </button>
+                <div className="flex flex-col md:flex-row md:gap-2 justify-center  text-center">
+                    <span>¿No tienes una cuenta?</span>
+                    <a onClick={() => navigate('/singup')} className="text-blue-500 hover:underline cursor-pointer">Registrate aquí</a>
+                </div>
             </div>
-            <div className="">
-                <span>¿No tienes una cuenta?</span>
-                <a onClick={() => navigate('/singup')} className="text-blue-500 hover:underline cursor-pointer">Registrarse</a>
+            <div className="flex justify-center items-center">
+                <p className="text-gray-500">© 2025 Flowven. Todos los derechos reservados.</p>
             </div>
         </div>
     );
