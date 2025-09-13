@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../integrations/Supabase';
-import Header from '../components/layout/Header';
 
 interface Category {
     id: number;
@@ -17,6 +17,7 @@ interface ProductForm {
 }
 
 export default function Admin() {
+    const navigate = useNavigate();
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
@@ -180,134 +181,204 @@ export default function Admin() {
     };
 
     return (
-        <div>
-            <Header />
-            <div className="flex flex-col p-6 max-w-2xl mx-auto">
-                <h1 className="text-2xl font-bold mb-6">Panel de Administrador</h1>
-                
-                {message && (
-                    <div className={`p-4 mb-4 rounded ${message.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-                        {message}
+        <div className="min-h-screen bg-gray-50 py-8">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+                <button
+                    onClick={() => navigate('/home')}
+                    className="mb-6 flex items-center text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Volver al Inicio
+                </button>
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6">
+                        <h1 className="text-3xl font-bold text-white">Panel de Administrador</h1>
+                        <p className="text-blue-100 mt-2">Agregar nuevo producto al catálogo</p>
                     </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-                    <div className="flex flex-col">
-                        <label htmlFor="name">Nombre del Producto:</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            required
-                            className="border p-2 rounded"
-                        />
-                    </div>
-
-                    <div className="flex flex-col">
-                        <label htmlFor="description">Descripción:</label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            value={formData.description}
-                            onChange={handleInputChange}
-                            rows={3}
-                            className="border p-2 rounded"
-                        />
-                    </div>
-
-                    <div className="flex flex-col">
-                        <label htmlFor="price">Precio ($):</label>
-                        <input
-                            type="text"
-                            id="price"
-                            name="price"
-                            value={formData.price}
-                            onChange={handleInputChange}
-                            min="0"
-                            step="0.01"
-                            required
-                            className="border p-2 rounded"
-                        />
-                    </div>
-
-                    <div className="flex flex-col relative">
-                        <label htmlFor="category_id">Categoría:</label>
-                        <button 
-                            id="dropdownDefaultButton" 
-                            onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-between" 
-                            type="button"
-                        >
-                            {selectedCategory ? selectedCategory.name : 'Selecciona una categoría'}
-                            <svg className="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
-                            </svg>
-                        </button>
-
-                        {dropdownOpen && (
-                            <div className="absolute top-full left-0 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-full border">
-                                <ul className="py-2 text-sm text-gray-700">
-                                    {categories.map(category => (
-                                        <li key={category.id}>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleCategorySelect(category)}
-                                                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                                            >
-                                                {category.name}
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
+                    
+                    <div className="p-8">
+                        {message && (
+                            <div className={`p-4 mb-6 rounded-lg border-l-4 ${message.includes('Error') ? 'bg-red-50 border-red-400 text-red-700' : 'bg-green-50 border-green-400 text-green-700'}`}>
+                                <div className="flex">
+                                    <div className="ml-3">
+                                        <p className="text-sm font-medium">{message}</p>
+                                    </div>
+                                </div>
                             </div>
                         )}
-                    </div>
 
-                    <div className="flex flex-col">
-                        <label htmlFor="stock">Stock:</label>
-                        <input
-                            type="text"
-                            id="stock"
-                            name="stock"
-                            value={formData.stock}
-                            onChange={handleInputChange}
-                            min="0"
-                            required
-                            className="border p-2 rounded"
-                        />
-                    </div>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="md:col-span-2">
+                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                                        Nombre del Producto
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                        placeholder="Ingresa el nombre del producto"
+                                    />
+                                </div>
 
-                    <div className="flex flex-col">
-                        <label htmlFor="image">Imagen del Producto:</label>
-                        <input
-                            type="file"
-                            id="image"
-                            name="image"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="border p-2 rounded"
-                        />
-                        {formData.image && (
-                            <p className="text-sm text-gray-600 mt-1">
-                                Archivo seleccionado: {formData.image.name}
-                            </p>
-                        )}
-                    </div>
+                                <div className="md:col-span-2">
+                                    <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                                        Descripción
+                                    </label>
+                                    <textarea
+                                        id="description"
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleInputChange}
+                                        rows={4}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
+                                        placeholder="Describe las características del producto"
+                                    />
+                                </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className={`p-3 rounded text-white font-medium ${
-                            loading 
-                                ? 'bg-gray-400 cursor-not-allowed' 
-                                : 'bg-blue-600 hover:bg-blue-700'
-                        }`}
-                    >
-                        {loading ? 'Creando Producto...' : 'Crear Producto'}
-                    </button>
-                </form>
+                                <div>
+                                    <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
+                                        Precio ($)
+                                    </label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-3 text-gray-500">$</span>
+                                        <input
+                                            type="number"
+                                            id="price"
+                                            name="price"
+                                            value={formData.price}
+                                            onChange={handleInputChange}
+                                            min="0"
+                                            step="0.01"
+                                            required
+                                            className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                            placeholder="0.00"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="relative">
+                                    <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-2">
+                                        Categoría
+                                    </label>
+                                    <button 
+                                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                                        className="w-full px-4 py-3 text-left border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors bg-white hover:bg-gray-50" 
+                                        type="button"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <span className={selectedCategory ? 'text-gray-900' : 'text-gray-500'}>
+                                                {selectedCategory ? selectedCategory.name : 'Selecciona una categoría'}
+                                            </span>
+                                            <svg className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </div>
+                                    </button>
+
+                                    {dropdownOpen && (
+                                        <div className="absolute top-full left-0 z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+                                            <ul className="py-1 max-h-60 overflow-auto">
+                                                {categories.map(category => (
+                                                    <li key={category.id}>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleCategorySelect(category)}
+                                                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                                                        >
+                                                            {category.name}
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-2">
+                                        Stock
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="stock"
+                                        name="stock"
+                                        value={formData.stock}
+                                        onChange={handleInputChange}
+                                        min="0"
+                                        required
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                        placeholder="Cantidad disponible"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Imagen del Producto
+                                </label>
+                                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+                                    <input
+                                        type="file"
+                                        id="image"
+                                        name="image"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                        className="hidden"
+                                    />
+                                    <label htmlFor="image" className="cursor-pointer">
+                                        <div className="space-y-2">
+                                            <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                            <div className="text-gray-600">
+                                                <span className="font-medium text-blue-600 hover:text-blue-500">Haz clic para subir</span> o arrastra una imagen
+                                            </div>
+                                            <p className="text-xs text-gray-500">PNG, JPG, GIF hasta 10MB</p>
+                                        </div>
+                                    </label>
+                                </div>
+                                {formData.image && (
+                                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                        <p className="text-sm text-green-700 font-medium">
+                                            ✓ Archivo seleccionado: {formData.image.name}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="pt-6 border-t border-gray-200">
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className={`w-full py-4 px-6 rounded-lg text-white font-semibold text-lg transition-all duration-200 ${
+                                        loading 
+                                            ? 'bg-gray-400 cursor-not-allowed' 
+                                            : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-[1.02] shadow-lg hover:shadow-xl'
+                                    }`}
+                                >
+                                    {loading ? (
+                                        <div className="flex items-center justify-center">
+                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Creando Producto...
+                                        </div>
+                                    ) : (
+                                        'Crear Producto'
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     );

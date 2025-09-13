@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../integrations/Supabase';
+import { FaThLarge, FaThList } from 'react-icons/fa';
+import { useCart } from '../../contexts/CartContext';
 
 interface Category {
     id: number;
@@ -22,6 +24,17 @@ export default function ListProducts() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isSingleColumn, setIsSingleColumn] = useState(false);
+    const { addToCart } = useCart();
+
+    const handleAddToCart = (product: Product) => {
+        addToCart({
+            id: product.id.toString(),
+            name: product.name,
+            price: product.price || 0,
+            imageUrl: product.image_url
+        });
+    };
 
     useEffect(() => {
         fetchProducts();
@@ -39,6 +52,7 @@ export default function ListProducts() {
                         name
                     )
                 `)
+                .gt('stock', 0)
                 .order('created_at', { ascending: false });
 
             if (error) {
@@ -112,72 +126,105 @@ export default function ListProducts() {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Productos Disponibles</h2>
-                <p className="text-gray-600">Descubre nuestra colección de productos</p>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                <div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Productos Disponibles</h2>
+                    <p className="text-gray-600">Descubre nuestra colección de productos</p>
+                </div>
+                
+                {/* Mobile Column Toggle Button */}
+                <div className="sm:hidden flex items-center space-x-2 bg-gray-100 p-1 rounded-lg">
+                    <button 
+                        onClick={() => setIsSingleColumn(false)}
+                        className={`p-2 rounded-md ${!isSingleColumn ? 'bg-white shadow-sm' : 'text-gray-500'}`}
+                        aria-label="Dos columnas"
+                    >
+                        <FaThList className="w-5 h-5" />
+                    </button>
+                    <button 
+                        onClick={() => setIsSingleColumn(true)}
+                        className={`p-2 rounded-md ${isSingleColumn ? 'bg-white shadow-sm' : 'text-gray-500'}`}
+                        aria-label="Una columna"
+                    >
+                        <FaThLarge className="w-5 h-5" />
+                    </button>
+                </div>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className={`grid ${isSingleColumn ? 'grid-cols-1' : 'grid-cols-2'} sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6`}>
                 {products.map((product) => (
-                    <div key={product.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-                        <div className="relative">
-                            <img 
-                                src={product.image_url} 
-                                alt={product.name}
-                                onError={(e) => {
-                                    e.currentTarget.src = 'https://via.placeholder.com/300x200?text=Sin+Imagen';
-                                }}
-                                className="w-full h-48 object-cover"
-                            />
+                    <div key={product.id} className={`bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden flex flex-col h-full ${
+                        !isSingleColumn ? 'border border-gray-100' : ''
+                    }`}>
+                        <div className="relative flex-shrink-0">
+                            <div className="aspect-w-1 aspect-h-1 w-full">
+                                <img 
+                                    src={product.image_url} 
+                                    alt={product.name}
+                                    onError={(e) => {
+                                        e.currentTarget.src = 'https://via.placeholder.com/300x200?text=Sin+Imagen';
+                                    }}
+                                    className="w-full h-40 sm:h-48 object-cover"
+                                />
+                            </div>
                             {product.categories && (
-                                <div className="absolute top-3 left-3">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                <div className="absolute top-2 left-2">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-white/90 text-gray-800 shadow-sm">
                                         {product.categories.name}
                                     </span>
                                 </div>
                             )}
                             {product.stock !== undefined && product.stock < 10 && product.stock > 0 && (
-                                <div className="absolute top-3 right-3">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        Pocas unidades
+                                <div className="absolute top-2 right-2">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-yellow-100/90 text-yellow-800 shadow-sm">
+                                        Casi agotado
                                     </span>
                                 </div>
                             )}
                         </div>
                         
-                        <div className="p-6">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
+                        <div className="p-4 flex flex-col flex-grow">
+                            <h3 className="text-base font-semibold text-gray-900 mb-1 line-clamp-1 h-6 overflow-hidden text-ellipsis">
                                 {product.name}
                             </h3>
-                            
-                            {product.description && (
-                                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                                    {product.description}
-                                </p>
-                            )}
-                            
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex flex-col">
-                                    <span className="text-2xl font-bold text-gray-900">
-                                        ${product.price ? product.price.toFixed(2) : 'Sin precio'}
+                            <p className="text-gray-600 text-sm mb-3 line-clamp-2 flex-grow">
+                                {product.description}
+                            </p>
+                            <div className="mt-auto">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="text-base font-bold text-blue-600">
+                                        {product.price ? `$${product.price.toFixed(2)}` : 'Precio no disponible'}
                                     </span>
-                                    {product.stock !== undefined && (
-                                        <span className="text-sm text-gray-500">
-                                            {product.stock === 0 ? 'Sin stock' : `${product.stock} disponibles`}
-                                        </span>
+                                    {product.stock === 0 && (
+                                        <span className="text-xs text-red-600 font-medium">Agotado</span>
                                     )}
                                 </div>
                             </div>
                             
                             <button 
+                                onClick={() => handleAddToCart(product)}
                                 disabled={product.stock === 0}
-                                className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 ${
+                                className={`w-full py-2.5 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center ${
                                     product.stock === 0 
-                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                        : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md active:transform active:scale-95'
+                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                                        : 'bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 active:scale-95 shadow-sm hover:shadow-md'
                                 }`}
                             >
-                                {product.stock === 0 ? 'Agotado' : 'Agregar al Carrito'}
+                                {product.stock === 0 ? (
+                                    <span className="flex items-center">
+                                        <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Agotado
+                                    </span>
+                                ) : (
+                                    <span className="flex items-center">
+                                        <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
+                                        Agregar
+                                    </span>
+                                )}
                             </button>
                         </div>
                     </div>
